@@ -1,0 +1,33 @@
+{% extends 'photo_studio/base.html' %}
+{% block content %}
+    <header class="bg-dark py-5">
+        <div class="container px-4 px-lg-5 my-5">
+            <div class="text-center text-white">
+                <h1 class="display-4 fw-bolder">{{ album_title }}</h1>
+                <p class="lead fw-normal text-white-50 mb-0">추억들을 사진첩으로 관리해보세요</p>
+            </div>
+        </div>
+    </header>
+    <section class="py-5">
+        <div class="container px-4 px-lg-5 mt-5"> 
+            <div class="row gx-4 gx-lg-5 row-cols-1 row-cols-md-3 row-cols-xl-4 justify-content-center">
+                {% if photos %}
+                    {% for photo in photos %}
+                        <div class="col mb-5">
+                            <div class="card-body p-5" id="studio">
+                                <div class="text-center">                      
+                                    <h4 class="fw-bolder">{{ photo.title }}</h2>
+                                    <br>
+                                    <img src="{{ photo.image.url }}" alt="{{ photo.title }}" class="img-fluid">
+                                    <br>
+                                    <br>
+                                    <p class="lead fw-normal text-muted mb-0">{{ photo.description }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+    </section>
+{% endblock content %}

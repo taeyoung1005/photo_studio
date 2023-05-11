@@ -1,0 +1,10 @@
+#studio:hover {
+    background: silver;
+}
+
+#studio {
+    border-radius: 10%;
+    border:solid black;
+    border-width: 5px;
+    border-color: rgba(0, 0, 0, 0.5);
+}
