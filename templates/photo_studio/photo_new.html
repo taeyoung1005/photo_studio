@@ -2,7 +2,7 @@
 {% block content %}
     <div class="container my-3" style="display: flex; justify-content: center;">
 
-        <form method="post" action="{% url 'photo_studio:album_new' %}">
+        <form method="post" action="{% url 'photo_studio:photo_new' album_id=album_id %}" enctype="multipart/form-data">
             {% csrf_token %}
             {% include "photo_studio/form_errors.html" %}
             <div class="col-12 mb-3">
@@ -11,19 +11,17 @@
                     value="{{ form.title.value|default_if_none:'' }}" required>
             </div>
             <div class="col-12 mb-3">
-                <label for="start_date">시작날짜</label>
-                <input type="date" class="form-control" name="start_date" id="start_date"
-                    value="{{ form.start_date.value|default_if_none:'' }}" required>
-            </div>
-            <div class="col-12 mb-3">
-                <label for="end_date">종료날짜</label>
-                <input type="date" class="form-control" name="end_date" id="end_date"
-                    value="{{ form.end_date.value|default_if_none:'' }}" required>
-            </div>
-            <div class="col-12 mb-3">
                 <label for="description">설명</label>
                 <input type="text" class="form-control" name="description" id="description"
-                    value="{{ form.description.value|default_if_none:'' }}" style="width:300px;height:200px;font-size:1rem;" required>
+                    value="{{ form.description.value|default_if_none:'' }}" 
+                    style="height:200px; 
+                    font-size:1rem; word-break:break-all;"
+                    required>
+            </div>
+            <div class="col-12 mb-3">
+                <label for="image">사진</label>
+                <input type="file" class="form-control" name="image" id="image"
+                    value="{{ form.image.value|default_if_none:'' }}" required>
             </div>
             <button type="submit" class="btn btn-primary col-12">등록</button>
         </form>

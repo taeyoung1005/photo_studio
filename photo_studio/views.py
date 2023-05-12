@@ -2,7 +2,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 
-from photo_studio.forms import UserForm, AlbumForm
+from photo_studio.forms import UserForm, AlbumForm, PhotoForm
 from .models import Album, Photo
 
 # Create your views here.
@@ -43,6 +43,22 @@ def album_new(request):
     else:
         form = AlbumForm()
     return render(request, 'photo_studio/album_new.html', {'form': form})
+
+@login_required
+def photo_new(request, album_id):
+    context = {}
+    context['album_id'] = album_id
+
+    if request.method == "POST":
+        form = PhotoForm(request.POST, request.FILES)
+        if form.is_valid():
+            photo = form.save(commit=False)
+            photo.album = Album.objects.get(id=album_id)
+            photo.save()
+            return redirect('photo_studio:album', album_id=album_id)
+    else:
+        context['form'] = PhotoForm()
+    return render(request, 'photo_studio/photo_new.html', context=context)
 
 def signup(request):
     if request.method == "POST":

@@ -5,6 +5,7 @@
             <div class="text-center text-white">
                 <h1 class="display-4 fw-bolder">{{ album_title }}</h1>
                 <p class="lead fw-normal text-white-50 mb-0">추억들을 사진첩으로 관리해보세요</p>
+                <button type="button" class="btn btn-outline-light btn-lg mt-4" onclick="location.href='{% url "photo_studio:photo_new" album_id=album_id %}'">사진 추가</button>
             </div>
         </div>
     </header>

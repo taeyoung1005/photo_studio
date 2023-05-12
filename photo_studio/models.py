@@ -26,8 +26,8 @@ class User(AbstractUser):
 class Album(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="사용자")
     title = models.CharField(max_length=50, verbose_name="제목")
-    start_date = models.DateField(verbose_name="시작일", blank=True)
-    last_date = models.DateField(verbose_name="종료일", blank=True)
+    start_date = models.DateField(verbose_name="시작일", blank=True, null=True)
+    last_date = models.DateField(verbose_name="종료일", blank=True, null=True)
     description = models.CharField(max_length=100, verbose_name="설명")
     
     def __str__(self):
