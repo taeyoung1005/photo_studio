@@ -24,7 +24,7 @@ def album(request, album_id):
     context = {}
     
     album_title = Album.objects.get(id=album_id).title
-    photos = Photo.objects.filter(album_id=album_id)
+    photos = Photo.objects.filter(album_id=album_id, album__owner=request.user)
 
     context['album_title'] = album_title
     context['photos'] = photos
