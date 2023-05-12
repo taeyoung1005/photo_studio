@@ -50,8 +50,10 @@ def photo_new(request, album_id):
     context['album_id'] = album_id
 
     if request.method == "POST":
+        print("1")
         form = PhotoForm(request.POST, request.FILES)
         if form.is_valid():
+            print("2")
             photo = form.save(commit=False)
             photo.album = Album.objects.get(id=album_id)
             photo.save()
