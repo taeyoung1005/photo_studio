@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
@@ -61,6 +62,10 @@ def photo_new(request, album_id):
     else:
         context['form'] = PhotoForm()
     return render(request, 'photo_studio/photo_new.html', context=context)
+
+@login_required
+def download(request, album_id):
+    return HttpResponse('download')
 
 def signup(request):
     if request.method == "POST":

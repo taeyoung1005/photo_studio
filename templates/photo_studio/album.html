@@ -9,26 +9,29 @@
             </div>
         </div>
     </header>
-    <section class="py-5">
-        <div class="container px-4 px-lg-5 mt-5"> 
-            <div class="row gx-4 gx-lg-5 row-cols-1 row-cols-md-3 row-cols-xl-4 justify-content-center">
-                {% if photos %}
-                    {% for photo in photos %}
-                        <div class="col mb-5">
-                            <div class="card-body p-5" id="studio">
-                                <div class="text-center">                      
-                                    <h4 class="fw-bolder">{{ photo.title }}</h2>
-                                    <br>
-                                    <img src="{{ photo.image.url }}" alt="{{ photo.title }}" class="img-fluid">
-                                    <br>
-                                    <br>
-                                    <p class="lead fw-normal text-muted mb-0">{{ photo.description }}</p>
+    <form method="POST" action="{% url 'photo_studio:download' album_id=album_id %}">
+        {% csrf_token %}
+        <section class="py-5">
+            <div class="container px-4 px-lg-5 mt-5"> 
+                <div class="row gx-4 gx-lg-5 row-cols-1 row-cols-md-3 row-cols-xl-4 justify-content-center">
+                    {% if photos %}
+                        {% for photo in photos %}
+                            <div class="col mb-5">
+                                <div class="card-body p-5" id="studio">
+                                    <div class="text-center">
+                                        <h4 class="fw-bolder">{{ photo.title }}<input type="checkbox" name="photo_id"></h2>
+                                        <br>
+                                        <img src="{{ photo.image.url }}" alt="{{ photo.title }}" class="img-fluid">
+                                        <br>
+                                        <br>
+                                        <p class="lead fw-normal text-muted mb-0">{{ photo.description }}</p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    {% endfor %}
-                {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
+    </form>
 {% endblock content %}
