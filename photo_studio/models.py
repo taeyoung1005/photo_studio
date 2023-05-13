@@ -42,6 +42,7 @@ class Photo(models.Model):
     title = models.CharField(max_length=50, verbose_name="제목")
     description = models.CharField(max_length=100, verbose_name="설명")
     image = models.ImageField(upload_to="static/img/%Y/%m/%d", verbose_name="이미지")
+    property = models.CharField(max_length=50, verbose_name="속성", default="", null=False)
     
     def __str__(self):
         return self.title

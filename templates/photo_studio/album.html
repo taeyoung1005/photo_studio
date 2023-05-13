@@ -11,15 +11,26 @@
     </header>
     <form method="POST" action="{% url 'photo_studio:download' album_id=album_id %}">
         {% csrf_token %}
+        <div style="margin: 0 auto;">
+            <span>세로는 세로끼리 가로는 가로끼리 이미지를 선택해주세요</span>
+            <input type="submit" class="btn btn-primary" value="다운로드" action="{% url 'photo_studio:download' album_id=album_id %}">
+        </div>
         <section class="py-5">
             <div class="container px-4 px-lg-5 mt-5"> 
-                <div class="row gx-4 gx-lg-5 row-cols-1 row-cols-md-3 row-cols-xl-4 justify-content-center">
+                <div class="row gx-4 gx-lg-5 row-cols-1 row-cols-md-3 row-cols-xl-3 justify-content-center">
                     {% if photos %}
                         {% for photo in photos %}
                             <div class="col mb-5">
                                 <div class="card-body p-5" id="studio">
                                     <div class="text-center">
-                                        <h4 class="fw-bolder">{{ photo.title }}<input type="checkbox" name="photo_id"></h2>
+                                        <h4 class="fw-bolder">{{ photo.title }} 
+                                            <input id="{{ photo.property }}" 
+                                                   class="photo{{ photo.id }}" 
+                                                   type="checkbox" 
+                                                   name="photo_id" 
+                                                   value="{{ photo.id }}" 
+                                                   onclick="select_limit('{{ photo.property }}', '{{ photo.id }}')">
+                                        </h4>
                                         <br>
                                         <img src="{{ photo.image.url }}" alt="{{ photo.title }}" class="img-fluid">
                                         <br>
@@ -34,4 +45,37 @@
             </div>
         </section>
     </form>
+<script>
+    var check_vartical = document.querySelectorAll('#세로');
+    var check_horizontal = document.querySelectorAll('#가로');
+
+    function select_limit(property, photo_id){
+        if(document.querySelector(`.photo${photo_id}`).checked == true){
+            if(property == '가로'){
+                for(var i=0; i<check_vartical.length; i++){
+                    check_vartical[i].disabled = true;
+                }
+                for(var i=0; i<check_horizontal.length; i++){
+                    check_horizontal[i].disabled = false;
+                }
+            }
+            else if(property == '세로'){
+                for(var i=0; i<check_horizontal.length; i++){
+                    check_horizontal[i].disabled = true;
+                }
+                for(var i=0; i<check_vartical.length; i++){
+                    check_vartical[i].disabled = false;
+                }
+            }
+        }
+        else{
+            for(var i=0; i<check_horizontal.length; i++){
+                check_horizontal[i].disabled = false;
+            }
+            for(var i=0; i<check_vartical.length; i++){
+                check_vartical[i].disabled = false;
+            }
+        }
+    }
+</script>
 {% endblock content %}

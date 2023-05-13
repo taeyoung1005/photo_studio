@@ -23,7 +23,22 @@
                 <input type="file" class="form-control" name="image" id="image"
                     value="{{ form.image.value|default_if_none:'' }}" required>
             </div>
+            <div class="col-12 mb-3">
+                <input type="radio" name="property" value="가로">가로사진
+                <input type="radio" name="property" value="세로">세로사진
+            </div>
             <button type="submit" class="btn btn-primary col-12">등록</button>
+            {% if messages %}
+            <hr>
+            <ul class="messages" style="padding-left:0px;">
+                {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %} 
+                    style="list-style:none; padding-left:0px; color:red;">
+                    {{ message }}
+                </li>
+                {% endfor %}
+            </ul>
+            {% endif %}
         </form>
     </div>
 {% endblock content %}

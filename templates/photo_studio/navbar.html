@@ -1,35 +1,42 @@
-<nav class="navbar navbar-expand-lg border-bottom" style="background-color:#2C3639;">
+<nav class="navbar navbar-expand-lg border-bottom" style="background-color:#2C3639; font-size:1.2rem;">
     <div class="container-fluid">
-        <a class="navbar-brand" href="{% url 'photo_studio:index' %}"><b>PhotoStudio</b></a>
-        <button class="navbar-toggler" type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#navbarSupportedContent"
-                aria-controls="navbarSupportedContent"
-                aria-expanded="false"
-                aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <a class="navbar-brand" href="{% url 'photo_studio:index' %}" style="font-size:1.6rem;"><b>PhotoStudio</b></a>
+        <div class="collapse navbar-collapse item2" id="navbarSupportedContent" style="float:left;">
             <ul class="navbar-nav mb-2 mb-lg-0">
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'photo_studio:main' %}">Main</a>
                 </li>
             </ul>
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    {% if user.is_authenticated %}
-                    <li class="nav-item">
+        </div>
+        <div class="item1">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0" style="flex-direction: row; float: right;">
+                {% if user.is_authenticated %}
+                    <li class="nav-item" id="account-settings">
                         <a class="nav-link" href="" >{{ user.username }}</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item" id="account-settings">
                         <a class="nav-link" href="{% url 'photo_studio:logout' %}" onclick='alert("로그아웃 되었습니다")'>로그아웃</a>
-                    {% else %}
+                    </li>
+                {% else %}
+                    <li class="nav-item" id="account-settings">
                         <a class="nav-link" href="{% url 'photo_studio:login' %}">로그인</a>
                     </li>
-                    {% endif %}
+                {% endif %}
                 <li>
                     {% if not user.is_authenticated %}
-                        <a class="nav-link" href="{% url 'photo_studio:signup' %}">회원가입</a>
+                        <a class="nav-link" id="account-settings" href="{% url 'photo_studio:signup' %}">회원가입</a>
                     {% endif %}
+                </li>
+                <li>
+                    <button class="navbar-toggler" type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#navbarSupportedContent"
+                            aria-controls="navbarSupportedContent"
+                            aria-expanded="false"
+                            aria-label="Toggle navigation"
+                            onclick="">
+                    <span class="navbar-toggler-icon"></span>
+                    </button>
                 </li>
             </ul>
         </div>

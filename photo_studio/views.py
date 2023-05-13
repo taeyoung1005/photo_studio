@@ -1,6 +1,8 @@
+from PIL import Image
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from django.shortcuts import render, redirect
 
 from photo_studio.forms import UserForm, AlbumForm, PhotoForm
@@ -51,21 +53,53 @@ def photo_new(request, album_id):
     context['album_id'] = album_id
 
     if request.method == "POST":
-        print("1")
         form = PhotoForm(request.POST, request.FILES)
         if form.is_valid():
-            print("2")
             photo = form.save(commit=False)
             photo.album = Album.objects.get(id=album_id)
             photo.save()
             return redirect('photo_studio:album', album_id=album_id)
-    else:
-        context['form'] = PhotoForm()
+        elif "property" not in request.POST:
+            messages.error(request, "속성을 선택해주세요.")
     return render(request, 'photo_studio/photo_new.html', context=context)
 
 @login_required
 def download(request, album_id):
-    return HttpResponse('download')
+    context = {}
+    context['album_id'] = album_id
+    if request.method == "POST":
+        photo_logo = Image.open('static/img/PhotoStudio.png').resize((650, 270))
+        photo_ids = request.POST.getlist('photo_id')
+        photo_list = []
+        for photo_id in photo_ids:
+            photo = Photo.objects.get(id=photo_id)
+            photo = Image.open(photo.image).resize((400, 300))
+            photo_list.append(photo)
+        new_image = Image.new('RGB',(950, 950), (0,0,0))
+        new_image.paste(photo_logo, (150, 0))
+
+        if len(photo_ids) == 1:
+            new_image.paste(photo_list[0], (50, 250))
+            new_image.show()
+            return redirect('photo_studio:album', album_id=album_id)
+        else:
+            # 짝수번째
+            x_offset = 50
+            y_offset = 250
+            for photo_id in range(0, len(photo_list), 2):
+                new_image.paste(photo_list[photo_id], (x_offset, y_offset))
+                y_offset += 350
+            
+            # 홀수번째
+            x_offset = 500
+            y_offset = 250
+            for photo_id in range(1, len(photo_list), 2):
+                new_image.paste(photo_list[photo_id], (x_offset, y_offset))
+                y_offset += 350
+            
+            new_image.show()
+        return redirect('photo_studio:album', album_id=album_id)
+    render(request, 'photo_studio/download.html', context=context)
 
 def signup(request):
     if request.method == "POST":
