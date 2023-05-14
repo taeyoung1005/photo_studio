@@ -7,21 +7,31 @@
             {% include "photo_studio/form_errors.html" %}
             <div class="col-12 mb-3">
                 <label for="title">제목</label>
-                <input type="text" class="form-control" name="title" id="title"
-                    value="{{ form.title.value|default_if_none:'' }}" required>
+                <input type="text" 
+                       class="form-control" 
+                       name="title" id="title"
+                       value="{{ form.title.value|default_if_none:'' }}" 
+                       required>
             </div>
             <div class="col-12 mb-3">
                 <label for="description">설명</label>
-                <input type="text" class="form-control" name="description" id="description"
-                    value="{{ form.description.value|default_if_none:'' }}" 
-                    style="height:200px; 
-                    font-size:1rem; word-break:break-all;"
-                    required>
+                <input type="text" 
+                       class="form-control" 
+                       name="description" 
+                       id="description"
+                       value="{{ form.description.value|default_if_none:'' }}" 
+                       style="height:200px; font-size:1rem; word-break:break-all;"
+                       required>
             </div>
             <div class="col-12 mb-3">
                 <label for="image">사진</label>
-                <input type="file" class="form-control" name="image" id="image"
-                    value="{{ form.image.value|default_if_none:'' }}" required>
+                <input type="file" 
+                       class="form-control" 
+                       name="image" 
+                       id="image"
+                       value="{{ form.image.value|default_if_none:'' }}" 
+                       accept="image/jpeg, image/png"
+                       required>
             </div>
             <div class="col-12 mb-3">
                 <input type="radio" name="property" value="가로">가로사진

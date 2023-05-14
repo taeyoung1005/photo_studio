@@ -50,3 +50,14 @@ class Photo(models.Model):
     class Meta:
         verbose_name = "사진"
         verbose_name_plural = "사진"
+
+class Photo_templates(models.Model):
+    template = models.ImageField(upload_to="static/img/templates", verbose_name="템플릿")
+    property = models.CharField(max_length=50, verbose_name="속성", default="", null=False)
+
+    def __str__(self):
+        return self.template.name
+    
+    class Meta:
+        verbose_name = "템플릿"
+        verbose_name_plural = "템플릿"
