@@ -1,11 +1,11 @@
-from PIL import Image
+from PIL import Image, ExifTags
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.shortcuts import render, redirect
 
-from photo_studio.forms import UserForm, AlbumForm, PhotoForm
+from photo_studio.forms import UserForm, UserFormForEdit, AlbumForm, PhotoForm
 from .models import Album, Photo, Photo_templates
 
 # Create your views here.
@@ -50,6 +50,35 @@ def album_new(request):
     return render(request, 'photo_studio/album_new.html', {'form': form})
 
 @login_required
+def album_edit(request, album_id):
+    context = {}
+    context['album_id'] = album_id
+
+    if request.method == "POST":
+        form = AlbumForm(request.POST)
+        album = Album.objects.get(id=album_id)
+        if form.is_valid():
+            album.title = form.cleaned_data['title']
+            album.start_date = form.cleaned_data['start_date']
+            album.last_date = form.cleaned_data['last_date']
+            album.description = form.cleaned_data['description']
+            album.save()
+            return redirect('photo_studio:main')
+    else:
+        album = Album.objects.get(id=album_id)
+        form = AlbumForm(instance=album)
+        context['form'] = form
+        context['start_date'] = str(album.start_date)
+        context['last_date'] = str(album.last_date)
+    return render(request, 'photo_studio/album_edit.html', context=context)
+
+@login_required
+def album_delete(request, album_id):
+    album = Album.objects.get(id=album_id)
+    album.delete()
+    return redirect('photo_studio:main')
+
+@login_required
 def photo_new(request, album_id):
     context = {}
     context['album_id'] = album_id
@@ -59,6 +88,7 @@ def photo_new(request, album_id):
         if form.is_valid():
             photo = form.save(commit=False)
             photo.album = Album.objects.get(id=album_id)
+            photo.owner = request.user
             photo.save()
             return redirect('photo_studio:album', album_id=album_id)
         elif "property" not in request.POST:
@@ -66,49 +96,101 @@ def photo_new(request, album_id):
     return render(request, 'photo_studio/photo_new.html', context=context)
 
 @login_required
+def photo_edit(request, album_id, photo_id):
+    context = {}
+    context['album_id'] = album_id
+    context['photo_id'] = photo_id
+
+    if request.method == "POST":
+        form = PhotoForm(request.POST, request.FILES)
+        photo = Photo.objects.get(id=photo_id)
+        if form.is_valid():
+            photo.title = form.cleaned_data['title']
+            photo.description = form.cleaned_data['description']
+            photo.image = form.cleaned_data['image']
+            photo.property = form.cleaned_data['property']
+            photo.save()
+            return redirect('photo_studio:album', album_id=album_id)
+        elif "property" not in request.POST:
+            messages.error(request, "속성을 선택해주세요.")
+    else:
+        photo = Photo.objects.get(id=photo_id)
+        form = PhotoForm(instance=photo)
+        context['form'] = form
+    return render(request, 'photo_studio/photo_edit.html', context=context)
+
+@login_required
+def photo_delete(request, album_id, photo_id):
+    photo = Photo.objects.get(id=photo_id)
+    photo.delete()
+    return redirect('photo_studio:album', album_id=album_id)
+
+@login_required
 def download(request, album_id):
     context = {}
     context['album_id'] = album_id
 
     if request.method == "POST":
-        photo_logo = Image.open('static/img/PhotoStudio.png').resize((650, 270))
+        # photo_logo = Image.open('static/img/PhotoStudio.png').resize((650, 270))
         photo_ids = request.POST.getlist('photo_id')
         photo_list = []
         template_id = request.POST.getlist('template_id')[0]
-        template_property = Photo_templates.objects.get(id=template_id).property
-        property_list = [Photo.objects.get(id=i).property for i in request.POST.getlist('photo_id')]
-
+        template = Photo_templates.objects.get(id=template_id)
+        template_property = template.property
         if template_property == '가로':
-            pass
-        elif template_property == '세로':
-
+            template = Image.open(template.template_url).resize((1800, 1200))
             for photo_id in photo_ids:
                 photo = Photo.objects.get(id=photo_id)
-                photo = Image.open(photo.image).resize((400, 300))
+                photo = Image.open(photo.image).resize((651, 520))
                 photo_list.append(photo)
-            new_image = Image.new('RGB',(950, 950), (0,0,0))
-            new_image.paste(photo_logo, (150, 0))
 
-            if len(photo_ids) == 1:
-                new_image.paste(photo_list[0], (50, 250))
-                new_image.show()
-                return redirect('photo_studio:album', album_id=album_id)
-            else:
-                # 짝수번째
-                x_offset = 50
-                y_offset = 250
-                for photo_id in range(0, len(photo_list), 2):
-                    new_image.paste(photo_list[photo_id], (x_offset, y_offset))
-                    y_offset += 350
-                
-                # 홀수번째
-                x_offset = 500
-                y_offset = 250
-                for photo_id in range(1, len(photo_list), 2):
-                    new_image.paste(photo_list[photo_id], (x_offset, y_offset))
-                    y_offset += 350
-                
-                new_image.show()
+            # 짝수번째
+            x_offset = 69
+            y_offset = 68
+            for photo_id in range(0, len(photo_list), 2):
+                template.paste(photo_list[photo_id], (x_offset, y_offset))
+                y_offset += 538
+            
+            # 홀수번째
+            x_offset = 738
+            y_offset = 68
+            for photo_id in range(1, len(photo_list), 2):
+                template.paste(photo_list[photo_id], (x_offset, y_offset))
+                y_offset += 538
+            
+            template.show()
+            
+        elif template_property == '세로':
+            template = Image.open(template.template_url).resize((1200, 1800))
+            for photo_id in photo_ids:
+                photo = Photo.objects.get(id=photo_id)
+                photo = Image.open(photo.image)
+                for orientation in ExifTags.TAGS.keys() : 
+                    if ExifTags.TAGS[orientation]=='Orientation' : break 
+                exif=dict(photo._getexif().items())
+                if exif[orientation] == 3 : 
+                    photo=photo.rotate(180, expand=True)
+                elif exif[orientation] == 6 : 
+                    photo=photo.rotate(270, expand=True)
+                elif exif[orientation] == 8 : 
+                    photo=photo.rotate(90, expand=True)
+                photo_list.append(photo.resize((508 , 612)))
+
+            # 짝수번째
+            x_offset = 64
+            y_offset = 425
+            for photo_id in range(0, len(photo_list), 2):
+                template.paste(photo_list[photo_id], (x_offset, y_offset))
+                y_offset += 637
+            
+            # 홀수번째
+            x_offset = 630
+            y_offset = 128
+            for photo_id in range(1, len(photo_list), 2):
+                template.paste(photo_list[photo_id], (x_offset, y_offset))
+                y_offset += 637
+            
+            template.show()
         return redirect('photo_studio:album', album_id=album_id)
     render(request, 'photo_studio/download.html', context=context)
 
@@ -125,3 +207,14 @@ def signup(request):
     else:
         form = UserForm()
     return render(request, 'photo_studio/signup.html', {'form': form})
+
+@login_required
+def account(request):
+    if request.method == "POST":
+        form = UserFormForEdit(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('photo_studio:account')
+    else:
+        form = UserFormForEdit(instance=request.user)
+    return render(request, 'photo_studio/account.html', {'form': form})

@@ -9,12 +9,14 @@
         <meta name="author" content="">
         <title>Photo Studio</title>
         <link rel="icon" type="image/x-icon" href="{% static 'assets/favicon.png' %}">
-        <link href="{% static 'css/custom_css.css' %}" rel="stylesheet">
         <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
         <style>
             #account-settings{
                 padding-right:8px;
                 padding-left:8px;
+            }
+            #studio:hover {
+                background: silver;
             }
         </style>
     </head>
@@ -22,7 +24,8 @@
         {% include 'photo_studio/navbar.html' %}
         {% block content %}{% endblock content %}
         {% include 'photo_studio/footer.html' %}
-        <script src="{% static 'js/bootstrap.min.js' %}"></script>
+        {% comment %} <script src="{% static 'js/bootstrap.min.js' %}"></script> {% endcomment %}
+        <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
         <script>
             var item1 = document.querySelector(".item1");
             var item2 = document.querySelector(".item2");

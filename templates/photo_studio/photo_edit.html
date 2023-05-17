@@ -1,10 +1,10 @@
 {% extends 'photo_studio/base.html' %}
 {% block content %}
     <div class="container my-3 py-3" style="text-align:center;">
-        <h1><b>사진 등록</b></h1>
+        <h1><b>사진 수정</b></h1>
     </div>
     <div class="container my-3" style="display: flex; justify-content: center;">
-        <form method="post" action="{% url 'photo_studio:photo_new' album_id=album_id %}" enctype="multipart/form-data">
+        <form method="post" action="{% url 'photo_studio:photo_edit' album_id=album_id photo_id=photo_id %}" enctype="multipart/form-data">
             {% csrf_token %}
             {% include "photo_studio/form_errors.html" %}
             <div class="col-12 mb-3">
@@ -17,7 +17,11 @@
             </div>
             <div class="col-12 mb-3">
                 <label for="description">설명</label>
-                <textarea class="form-control" name="description" id="description" style="font-size:1rem; height:15rem"></textarea>
+                <textarea
+                       class="form-control" 
+                       name="description" 
+                       id="description"
+                       style="font-size:1rem; height:15rem">{{ form.description.value|default_if_none:'' }}</textarea>
             </div>
             <div class="col-12 mb-3">
                 <label for="image">사진</label>
@@ -25,15 +29,15 @@
                        class="form-control" 
                        name="image" 
                        id="image"
-                       value="{{ form.image.value|default_if_none:'' }}" 
+                       value="{{ form.image.value |default_if_none:'' }}" 
                        accept="image/jpeg, image/png"
                        required>
             </div>
             <div class="col-12 mb-3">
-                <input type="radio" name="property" value="가로">가로사진
-                <input type="radio" name="property" value="세로">세로사진
+                <input type="radio" name="property" value="가로" {% if form.property.value == "가로" %}checked{% endif %}>가로사진
+                <input type="radio" name="property" value="세로" {% if form.property.value == "세로" %}checked{% endif %}>세로사진
             </div>
-            <button type="submit" class="btn btn-primary col-12">등록</button>
+            <button type="submit" class="btn btn-primary col-12">수정</button>
             {% if messages %}
             <hr>
             <ul class="messages" style="padding-left:0px;">

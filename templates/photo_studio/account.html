@@ -1,0 +1,30 @@
+{% extends "photo_studio/base.html" %}
+{% block content %}
+<div class="container my-3">
+    <form method="post" action="{% url 'photo_studio:login' %}">
+        {% csrf_token %}
+        {% include "photo_studio/form_errors.html" %}
+        <div class="mb-3">
+            <label for="last_name">성</label>
+            <input type="text" class="form-control" name="last_name" id="last_name"
+                   value="{{ form.last_name.value|default_if_none:'' }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="first_name">이름</label>
+            <input type="text" class="form-control" name="first_name" id="first_name"
+                   value="{{ form.first_name.value|default_if_none:'' }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="email">이메일</label>
+            <input type="text" class="form-control" name="email" id="email"
+                   value="{{ form.email.value|default_if_none:'' }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="phone_number">전화번호</label>
+            <input type="text" class="form-control" name="phone_number" id="phone_number"
+                   value="{{ form.phone_number.value|default_if_none:'' }}" placeholder="010-1234-5678" required>
+        </div>
+        <button type="submit" class="btn btn-primary">수정</button>
+    </form>
+</div>
+{% endblock content %}

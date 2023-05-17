@@ -4,7 +4,7 @@
         <div class="container px-4 px-lg-5 my-5">
             <div class="text-center text-white">
                 <h1 class="display-4 fw-bolder">앨범 리스트</h1>
-                <p class="lead fw-normal text-white-50 mb-0">추억들을 사진첩으로 관리해보세요</p>
+                <p class="lead fw-normal text-white-50 mb-0">앨범을 클릭해주세요</p>
                 <button type="button" class="btn btn-outline-light btn-lg mt-4" onclick="location.href='{% url "photo_studio:album_new" %}'">앨범 추가</button>
             </div>
         </div>
@@ -12,18 +12,27 @@
     <!-- Section-->
     <section class="py-5">
         <div class="container px-4 px-lg-5 mt-5"> 
-            <div class="row gx-4 gx-lg-5 row-cols-1 row-cols-md-3 row-cols-xl-4 justify-content-center">
+            <div class="row gx-4 gx-lg-5 row-cols-md-2 row-cols-lg-3 justify-content-center">
                 {% if albums %}
                     {% for album in albums %}
                         <div class="col mb-5">
-                            <div class="card-body p-7" id="studio" onclick="location.href='{% url "photo_studio:album" album_id=album.id %}'">
-                                <div class="text-center">
-                                    <br>
-                                    <h2 class="fw-bolder">{{ album.title }}</h2>
-                                    <br>
-                                    <p class="lead fw-normal text-muted mb-0">{{ album.description }}</p>
-                                    <br>
+                            <div class="card text-dark bg-light mb-3">
+                                <img alt="AI 이미지 생성 예정" class="card-img-top">
+                                <div class="card-body" id="studio" onclick="location.href='{% url "photo_studio:album" album_id=album.id %}'">
+                                    <div class="text-center">
+                                        <h2 class="card-title">{{ album.title }}</h2>
+                                        <p class="card-text">{{ album.description }}</p>
+                                    </div>
                                 </div>
+                                <div class="card-body dropdown text-center">
+                                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        옵션
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="{% url 'photo_studio:album_edit' album_id=album.id %}">수정</a></li>
+                                        <li><a class="dropdown-item" href="{% url 'photo_studio:album_delete' album_id=album.id %}">삭제</a></li>
+                                    </ul>
+                                </div>                                
                             </div>
                         </div>
                     {% endfor %}

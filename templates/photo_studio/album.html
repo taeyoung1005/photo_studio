@@ -18,24 +18,26 @@
             <div class="justify-content-center text-center" style="margin-top:1rem; margin-bottom:1rem;">
                 <input type="submit" 
                        class="btn btn-primary" 
-                       value="사진 다운로드" 
+                       value="네컷사진 다운로드" 
                        action="{% url 'photo_studio:download' album_id=album_id %}">
             </div>
         </div>
         <div class="container text-center">
-            <div class="row row-cols-auto justify-content-center">
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 justify-content-center">
                 {% if photo_templates %}
                     {% for template in photo_templates %}
                         <div class="col">
+                            <p>{{ template.property }}
+                                <input 
+                                    class="template{{ template.id }}"
+                                    type="radio"
+                                    name="template_id"
+                                    value="{{ template.id }}"
+                                    onclick="select_limit('{{ template.property }}', '{{ template.id }}')">
+                            </p>
                             <img class="img-thumbnail flex" 
-                                src="{{ template.template.url }}"
+                                src="{{ template.template_url.url }}"
                                 style="width:200px; height:200px;">
-                            <input 
-                                   class="template{{ template.id }}"
-                                   type="radio"
-                                   name="template_id"
-                                   value="{{ template.id }}"
-                                   onclick="select_limit('{{ template.property }}', '{{ template.id }}')">
                         </div>
                     {% endfor %}
                 {% endif %}
@@ -43,27 +45,34 @@
         </div>
         <section class="py-5">
             <div class="container px-4 px-lg-5 mt-5"> 
-                <div class="row gx-4 gx-lg-5 row-cols-1 row-cols-md-3 row-cols-xl-3 justify-content-center">
+                <div class="row gx-4 gx-lg-5 row-cols-1 row-cols-md-2 row-cols-lg-3 justify-content-center">
                     {% if photos %}
                         {% for photo in photos %}
                             <div class="col mb-5">
-                                <div class="card-body p-5" id="studio">
-                                    <div class="text-center">
-                                        <h4 class="fw-bolder">
-                                            {{ photo.title }} 
-                                            <input id="{{ photo.property }}" 
-                                                   class="photo{{ photo.id }}" 
-                                                   type="checkbox" 
-                                                   name="photo_id" 
-                                                   value="{{ photo.id }}" 
-                                                   onclick="select_limit('{{ photo.property }}', '{{ photo.id }}')"
-                                                   disabled>
-                                        </h4>
-                                        <br>
-                                        <img src="{{ photo.image.url }}" alt="{{ photo.title }}" class="img-fluid">
-                                        <br>
-                                        <br>
-                                        <p class="lead fw-normal text-muted mb-0">{{ photo.description }}</p>
+                                <div class="card text-dark bg-light mb-3" style="max-width: 18rem;">
+                                    <img src="{{ photo.image.url }}" alt="{{ photo.title }}" class="card-img-top">
+                                    <div class="card-body" id="studio">
+                                        <div class="text-center">
+                                            <h5 class="card-title">
+                                                {{ photo.title }} 
+                                                <input id="{{ photo.property }}" 
+                                                    class="photo{{ photo.id }}" 
+                                                    type="checkbox" 
+                                                    name="photo_id" 
+                                                    value="{{ photo.id }}"
+                                                    disabled>
+                                            </h5>
+                                            <p class="card-text">{{ photo.description }}</p>
+                                            <div class="dropdown">
+                                                <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                  옵션
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                  <li><a class="dropdown-item" href="{% url 'photo_studio:photo_edit' photo_id=photo.id album_id=album_id %}">수정</a></li>
+                                                  <li><a class="dropdown-item" href="{% url 'photo_studio:photo_delete' photo_id=photo.id album_id=album_id %}">삭제</a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

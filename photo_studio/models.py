@@ -43,6 +43,7 @@ class Photo(models.Model):
     description = models.CharField(max_length=100, verbose_name="설명")
     image = models.ImageField(upload_to="static/img/%Y/%m/%d", verbose_name="이미지")
     property = models.CharField(max_length=50, verbose_name="속성", default="", null=False)
+    owner = models.CharField(max_length=20, verbose_name="사용자")
     
     def __str__(self):
         return self.title
@@ -52,11 +53,11 @@ class Photo(models.Model):
         verbose_name_plural = "사진"
 
 class Photo_templates(models.Model):
-    template = models.ImageField(upload_to="static/img/templates", verbose_name="템플릿")
+    template_url = models.ImageField(upload_to="static/img/templates", verbose_name="템플릿")
     property = models.CharField(max_length=50, verbose_name="속성", default="", null=False)
 
     def __str__(self):
-        return self.template.name
+        return self.template_url.name
     
     class Meta:
         verbose_name = "템플릿"

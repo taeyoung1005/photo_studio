@@ -13,7 +13,7 @@ class Photo_templatesAdmin(admin.ModelAdmin):
 
     def template_image(self, obj):
         return mark_safe('<img src="{url}" width="{width}" height={height} />'.format(
-            url=obj.template.url,
+            url=obj.template_url.url,
             width=200,
             height=200,
         )

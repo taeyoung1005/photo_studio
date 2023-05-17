@@ -4,7 +4,7 @@
         <div class="collapse navbar-collapse item2" id="navbarSupportedContent" style="float:left;">
             <ul class="navbar-nav mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'photo_studio:main' %}">Index</a>
+                    <a class="nav-link" href="{% url 'photo_studio:main' %}">Main</a>
                 </li>
             </ul>
         </div>
@@ -12,7 +12,7 @@
             <ul class="navbar-nav me-auto mb-2 mb-lg-0" style="flex-direction: row; float: right;">
                 {% if user.is_authenticated %}
                     <li class="nav-item" id="account-settings">
-                        <a class="nav-link" href="" >{{ user.username }}</a>
+                        <a class="nav-link" href="{% url 'photo_studio:account' %}" >{{ user.username }}</a>
                     </li>
                     <li class="nav-item" id="account-settings">
                         <a class="nav-link" href="{% url 'photo_studio:logout' %}" onclick='alert("로그아웃 되었습니다")'>로그아웃</a>

@@ -1,10 +1,10 @@
 {% extends 'photo_studio/base.html' %}
 {% block content %}
     <div class="container my-3 py-3" style="text-align:center;">
-        <h1><b>앨범 등록</b></h1>
+        <h1><b>앨범 수정</b></h1>
     </div>
     <div class="container my-3" style="display: flex; justify-content: center;">
-        <form method="post" action="{% url 'photo_studio:album_new' %}">
+        <form method="post" action="{% url 'photo_studio:album_edit' album_id=album_id %}">
             {% csrf_token %}
             {% include "photo_studio/form_errors.html" %}
             <div class="col-12 mb-3">
@@ -15,18 +15,18 @@
             <div class="col-12 mb-3">
                 <label for="start_date">시작날짜</label>
                 <input type="date" class="form-control" name="start_date" id="start_date"
-                    value="{{ form.start_date.value|default_if_none:'' }}" required>
+                    value="{{ start_date|default_if_none:'' }}" required>
             </div>
             <div class="col-12 mb-3">
                 <label for="end_date">종료날짜</label>
                 <input type="date" class="form-control" name="end_date" id="end_date"
-                    value="{{ form.end_date.value|default_if_none:'' }}" required>
+                    value="{{ last_date|default_if_none:'' }}" required>
             </div>
             <div class="col-12 mb-3">
                 <label for="description">설명</label>
-                <textarea class="form-control" name="description" id="description" style="font-size:1rem; height:15rem"></textarea>
+                <textarea class="form-control" name="description" id="description" style="font-size:1rem; height:15rem">{{ form.description.value|default_if_none:'' }}</textarea>
             </div>
-            <button type="submit" class="btn btn-primary col-12">등록</button>
+            <button type="submit" class="btn btn-primary col-12">수정</button>
         </form>
     </div>
 {% endblock content %}
