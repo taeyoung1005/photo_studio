@@ -1,5 +1,6 @@
+from datetime import datetime
 from PIL import Image, ExifTags
-from django.http import HttpResponse
+from django.http import HttpResponse, FileResponse
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -129,9 +130,10 @@ def photo_delete(request, album_id, photo_id):
 def download(request, album_id):
     context = {}
     context['album_id'] = album_id
-
+    response = None
     if request.method == "POST":
         # photo_logo = Image.open('static/img/PhotoStudio.png').resize((650, 270))
+        now = datetime.now()
         photo_ids = request.POST.getlist('photo_id')
         photo_list = []
         template_id = request.POST.getlist('template_id')[0]
@@ -157,8 +159,10 @@ def download(request, album_id):
             for photo_id in range(1, len(photo_list), 2):
                 template.paste(photo_list[photo_id], (x_offset, y_offset))
                 y_offset += 538
-            
-            template.show()
+
+            template.save(f'static/img/merge_image/{now.strftime("%Y-%m-%d_%H_%M_%S")}.png')
+            img = open(f'static/img/merge_image/{now.strftime("%Y-%m-%d_%H_%M_%S")}.png', 'rb')
+            response = FileResponse(img)
             
         elif template_property == '세로':
             template = Image.open(template.template_url).resize((1200, 1800))
@@ -190,8 +194,10 @@ def download(request, album_id):
                 template.paste(photo_list[photo_id], (x_offset, y_offset))
                 y_offset += 637
             
-            template.show()
-        return redirect('photo_studio:album', album_id=album_id)
+            template.save(f'static/img/merge_image/{now.strftime("%Y-%m-%d_%H_%M_%S")}.png')
+            img = open(f'static/img/merge_image/{now.strftime("%Y-%m-%d_%H_%M_%S")}.png', 'rb')
+            response = FileResponse(img)
+        return response
     render(request, 'photo_studio/download.html', context=context)
 
 def signup(request):
