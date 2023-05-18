@@ -1,10 +1,11 @@
 from datetime import datetime
 from PIL import Image, ExifTags
-from django.http import HttpResponse, FileResponse
+from django.http import Http404, HttpResponse, FileResponse, HttpResponseForbidden, HttpResponseNotFound, HttpResponseServerError
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
+from django.template import TemplateDoesNotExist
 
 from photo_studio.forms import UserForm, UserFormForEdit, AlbumForm, PhotoForm
 from .models import Album, Photo, Photo_templates
@@ -12,13 +13,21 @@ from .models import Album, Photo, Photo_templates
 # Create your views here.
 
 def index(request):
-    return render(request, 'photo_studio/index.html')
+    try:
+        return render(request, 'photo_studio/index.html')
+    except TemplateDoesNotExist:
+        return HttpResponseServerError('Template does not exist')
+    except Exception as e:
+        return HttpResponseServerError('Something went wrong: ' + str(e))
 
 @login_required
 def main(request):
     context = {}
     
-    albums = Album.objects.filter(owner=request.user)
+    try:
+        albums = Album.objects.filter(owner=request.user)
+    except Album.DoesNotExist:
+        albums = None
     
     context['albums'] = albums
     return render(request, 'photo_studio/main.html', context=context)
@@ -27,9 +36,12 @@ def main(request):
 def album(request, album_id):
     context = {}
     
-    album_title = Album.objects.get(id=album_id).title
-    photos = Photo.objects.filter(album_id=album_id, album__owner=request.user)
-    photo_templates = Photo_templates.objects.all()
+    try:
+        album_title = Album.objects.get(id=album_id).title
+        photos = Photo.objects.filter(album_id=album_id, album__owner=request.user)
+        photo_templates = Photo_templates.objects.all()
+    except Album.DoesNotExist:
+        return HttpResponseNotFound()
     
     context['photo_templates'] = photo_templates
     context['album_title'] = album_title
@@ -66,7 +78,10 @@ def album_edit(request, album_id):
             album.save()
             return redirect('photo_studio:main')
     else:
-        album = Album.objects.get(id=album_id)
+        try:
+            album = Album.objects.get(id=album_id)
+        except Album.DoesNotExist:
+            raise Http404
         form = AlbumForm(instance=album)
         context['form'] = form
         context['start_date'] = str(album.start_date)
@@ -75,36 +90,51 @@ def album_edit(request, album_id):
 
 @login_required
 def album_delete(request, album_id):
-    album = Album.objects.get(id=album_id)
-    album.delete()
+    try:
+        album = Album.objects.get(id=album_id)
+        if album.owner != request.user:
+            return HttpResponseForbidden()
+        album.delete()
+    except Album.DoesNotExist:
+        return HttpResponseNotFound()
     return redirect('photo_studio:main')
 
 @login_required
 def photo_new(request, album_id):
     context = {}
     context['album_id'] = album_id
+    album = get_object_or_404(Album, id=album_id)
+    context['album'] = album
 
     if request.method == "POST":
         form = PhotoForm(request.POST, request.FILES)
         if form.is_valid():
             photo = form.save(commit=False)
-            photo.album = Album.objects.get(id=album_id)
+            photo.album = album
             photo.owner = request.user
             photo.save()
             return redirect('photo_studio:album', album_id=album_id)
-        elif "property" not in request.POST:
-            messages.error(request, "속성을 선택해주세요.")
+        else:
+            messages.error(request, "사진을 선택해주세요.")
+    else:
+        form = PhotoForm()
+    context['form'] = form
     return render(request, 'photo_studio/photo_new.html', context=context)
 
+# photo_studio/views.py
 @login_required
 def photo_edit(request, album_id, photo_id):
     context = {}
     context['album_id'] = album_id
     context['photo_id'] = photo_id
 
+    try:
+        photo = Photo.objects.get(id=photo_id)
+    except Photo.DoesNotExist:
+        raise Http404
+
     if request.method == "POST":
         form = PhotoForm(request.POST, request.FILES)
-        photo = Photo.objects.get(id=photo_id)
         if form.is_valid():
             photo.title = form.cleaned_data['title']
             photo.description = form.cleaned_data['description']
@@ -112,17 +142,21 @@ def photo_edit(request, album_id, photo_id):
             photo.property = form.cleaned_data['property']
             photo.save()
             return redirect('photo_studio:album', album_id=album_id)
-        elif "property" not in request.POST:
-            messages.error(request, "속성을 선택해주세요.")
+        else:
+            context['form'] = form
     else:
-        photo = Photo.objects.get(id=photo_id)
         form = PhotoForm(instance=photo)
         context['form'] = form
     return render(request, 'photo_studio/photo_edit.html', context=context)
 
 @login_required
 def photo_delete(request, album_id, photo_id):
-    photo = Photo.objects.get(id=photo_id)
+    try:
+        photo = Photo.objects.get(id=photo_id)
+    except Photo.DoesNotExist:
+        return redirect('photo_studio:album', album_id=album_id)
+    if photo.owner != request.user:
+        return redirect('photo_studio:album', album_id=album_id)
     photo.delete()
     return redirect('photo_studio:album', album_id=album_id)
 
@@ -162,7 +196,6 @@ def download(request, album_id):
 
             template.save(f'static/img/merge_image/{now.strftime("%Y-%m-%d_%H_%M_%S")}.png')
             img = open(f'static/img/merge_image/{now.strftime("%Y-%m-%d_%H_%M_%S")}.png', 'rb')
-            response = FileResponse(img)
             
         elif template_property == '세로':
             template = Image.open(template.template_url).resize((1200, 1800))
@@ -196,7 +229,8 @@ def download(request, album_id):
             
             template.save(f'static/img/merge_image/{now.strftime("%Y-%m-%d_%H_%M_%S")}.png')
             img = open(f'static/img/merge_image/{now.strftime("%Y-%m-%d_%H_%M_%S")}.png', 'rb')
-            response = FileResponse(img)
+        response = FileResponse(img, content_type='image/png')
+        response['Content-Disposition'] = 'attachment; filename="merge_image.png"'
         return response
     render(request, 'photo_studio/download.html', context=context)
 
@@ -210,8 +244,8 @@ def signup(request):
             user = authenticate(username=username, password=raw_password)  # 사용자 인증
             login(request, user)  # 로그인
             return redirect('photo_studio:index')
-    else:
-        form = UserForm()
+        else:
+            form = UserForm()
     return render(request, 'photo_studio/signup.html', {'form': form})
 
 @login_required
