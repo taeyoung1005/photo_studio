@@ -24,8 +24,8 @@ app_name = 'config'
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    re_path('^album/(?P<username>.+)/$', AlbumViewSet.as_view()),
-    re_path('^photo/(?P<username>.+)/$', PhotoViewSet.as_view()),
+    re_path('^api/album/(?P<username>.+)/$', AlbumViewSet.as_view()),
+    re_path('^api/photo/(?P<username>.+)/$', PhotoViewSet.as_view()),
     path('', include('photo_studio.urls')),
 ]
 

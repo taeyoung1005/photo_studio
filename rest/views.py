@@ -3,6 +3,7 @@ from rest_framework import generics
 from rest_framework.authentication import TokenAuthentication
 from rest_framework import permissions
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.filters import SearchFilter
 
 from photo_studio.models import User, Album, Photo
 from rest.serializers import AlbumSerializer, PhotoSerializer
@@ -21,6 +22,8 @@ class AlbumViewSet(generics.ListAPIView):
     serializer_class = AlbumSerializer
     authenticated = [TokenAuthentication]
     permission_classes = [IsOwnerAlbum, IsAuthenticated]
+    filter_backends = [SearchFilter]
+    search_fields = ['title', 'description']
     
     def get_queryset(self):
         username = self.kwargs['username']
@@ -40,6 +43,8 @@ class PhotoViewSet(generics.ListAPIView):
     serializer_class = PhotoSerializer
     authenticated = [TokenAuthentication]
     permission_classes = [IsOwnerPhoto, IsAuthenticated]
+    filter_backends = [SearchFilter]
+    search_fields = ['title', 'description']
     
     def get_queryset(self):
         username = self.kwargs['username']

@@ -26,7 +26,8 @@
         {% include 'photo_studio/footer.html' %}
         {% comment %} <script src="{% static 'js/bootstrap.min.js' %}"></script> {% endcomment %}
         <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
-        <script>
+        <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+        <script type="text/javascript">
             var item1 = document.querySelector(".item1");
             var item2 = document.querySelector(".item2");
             
@@ -49,6 +50,26 @@
                     item1.style.order = 1;
                     item2.style.order = 2;
                 }
+            }
+
+            if(document.querySelector("#search_main")){
+                $.ajax({
+                    type : 'GET',           // 타입 (get, post, put 등등)
+                    url : '/api/album/{{ request.user.username }}',           // 요청할 서버url
+                    async : true,            // 비동기화 여부 (default : true)
+                    headers : {              // Http header
+                      "Content-Type" : "application/json",
+                      "X-HTTP-Method-Override" : "POST"
+                    },
+                    dataType : 'json',       // 데이터 타입 (html, xml, json, text 등등)
+                    success : function(result) { // 결과 성공 콜백함수
+                        console.log(result);
+                        console.log(result[0].title);
+                    },
+                    error : function(request, status, error) { // 결과 에러 콜백함수
+                        console.log(error)
+                    }
+                })
             }
         </script>
     </body>

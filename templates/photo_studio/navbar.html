@@ -7,6 +7,15 @@
                     <a class="nav-link" href="{% url 'photo_studio:main' %}">Main</a>
                 </li>
             </ul>
+            {% if request.path != '/' %}
+                <div style="margin: 0 auto;">
+                    {% if 'main' in request.path %}
+                        <input class="form-control me-2" type="search" id="search_main" placeholder="Search" aria-label="Search">
+                    {% elif 'album' in request.path %}
+                        <input class="form-control me-2" type="search" id="search_album" placeholder="Search" aria-label="Search">
+                    {% endif %}
+                </div>
+            {% endif %}
         </div>
         <div class="item1">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0" style="flex-direction: row; float: right;">
