@@ -12,6 +12,7 @@
             </div>
         </div>
     </header>
+    {% if photos %}
     <form method="POST" action="{% url 'photo_studio:download' album_id=album_id %}">
         {% csrf_token %}
         <div style="margin: 0 auto;">
@@ -46,10 +47,9 @@
         <section class="py-5">
             <div class="container px-4 px-lg-5 mt-5"> 
                 <div class="row gx-4 gx-lg-5 row-cols-1 row-cols-md-2 row-cols-lg-3 justify-content-center">
-                    {% if photos %}
                         {% for photo in photos %}
                             <div class="col mb-5">
-                                <div class="card text-dark bg-light mb-3" style="max-width: 18rem;">
+                                <div class="card text-dark bg-light mb-3" style="max-width: 18rem; margin:0 auto;">
                                     <img src="{{ photo.image.url }}" alt="{{ photo.title }}" class="card-img-top">
                                     <div class="card-body" id="studio">
                                         <div class="text-center">
@@ -77,11 +77,13 @@
                                 </div>
                             </div>
                         {% endfor %}
-                    {% endif %}
                 </div>
             </div>
         </section>
     </form>
+    {% else %}
+        <h1 style="text-align:center; padding:10px;">사진을 추가해주세요.</h1>
+    {% endif %}
 <script>
     var check_vartical = document.querySelectorAll('#세로');
     var check_horizontal = document.querySelectorAll('#가로');

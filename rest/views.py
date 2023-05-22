@@ -33,7 +33,6 @@ class AlbumViewSet(generics.ListAPIView):
 class IsOwnerPhoto(permissions.BasePermission):
     def has_permission(self, request, view):
         username = request.user.username
-        print(username)
         if username in request.path:
             return True
         else:

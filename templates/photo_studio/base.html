@@ -27,50 +27,115 @@
         {% comment %} <script src="{% static 'js/bootstrap.min.js' %}"></script> {% endcomment %}
         <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
         <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-        <script type="text/javascript">
+        <script type="text/javascript">           
             var item1 = document.querySelector(".item1");
             var item2 = document.querySelector(".item2");
             
+            var search_text = document.querySelector(".search_text");
             window.onresize = function(event){
                 if(window.innerWidth >= 992){
                     item2.style.order = 1;
                     item1.style.order = 2;
+                    search_text.style.margin = "auto";
                 }
                 else{
                     item1.style.order = 1;
                     item2.style.order = 2;
+                    search_text.style.position = "relative";
+                    search_text.style.top = "";
+                    search_text.style.left = "";
+                    search_text.style.transform = "";
+                    search_text.style.margin = "";
                 }
             }
             window.onload = function(event){
                 if(window.innerWidth >= 992){
                     item2.style.order = 1;
                     item1.style.order = 2;
+                    search_text.style.margin = "auto";
                 }
                 else{
                     item1.style.order = 1;
                     item2.style.order = 2;
+                    search_text.style.position = "relative";
+                    search_text.style.top = "";
+                    search_text.style.left = "";
+                    search_text.style.transform = "";
+                    search_text.style.margin = "";
                 }
             }
 
+        function search(){
             if(document.querySelector("#search_main")){
-                $.ajax({
-                    type : 'GET',           // 타입 (get, post, put 등등)
-                    url : '/api/album/{{ request.user.username }}',           // 요청할 서버url
-                    async : true,            // 비동기화 여부 (default : true)
-                    headers : {              // Http header
-                      "Content-Type" : "application/json",
-                      "X-HTTP-Method-Override" : "POST"
-                    },
-                    dataType : 'json',       // 데이터 타입 (html, xml, json, text 등등)
-                    success : function(result) { // 결과 성공 콜백함수
-                        console.log(result);
-                        console.log(result[0].title);
-                    },
-                    error : function(request, status, error) { // 결과 에러 콜백함수
-                        console.log(error)
-                    }
-                })
+                var text = document.querySelector("#search_main").value;
+                if(text != null){
+                    $.ajax({
+                        type : 'GET',           // 타입 (get, post, put 등등)
+                        url : `/api/album/{{ request.user.username }}/?search=${text}`,           // 요청할 서버url
+                        async : true,            // 비동기화 여부 (default : true)
+                        headers : {              // Http header
+                        "Content-Type" : "application/json",
+                        "X-HTTP-Method-Override" : "POST"
+                        },
+                        dataType : 'json',       // 데이터 타입 (html, xml, json, text 등등)
+                        success : function(result) { // 결과 성공 콜백함수
+                            var list = "";
+                            try{
+                                if(text != ""){
+                                    for(var i=0; i<result.length; i++){
+                                        list += `<li class="list-group-item" style="list-style: none">
+                                                    ${result[i].title} | ${result[i].description}
+                                                </li>`;
+                                    }   
+                                }
+                                document.querySelector(".list-group").innerHTML = list;
+                            }
+                            catch{
+                                console.log("no result");
+                            }
+                        },
+                        error : function(request, status, error) { // 결과 에러 콜백함수
+                            console.log('error');
+                        }
+                    })
+                }
             }
+
+            if(document.querySelector("#search_album")){
+                var text = document.querySelector("#search_album").value;
+                if(text != null){
+                    $.ajax({
+                        type : 'GET',           // 타입 (get, post, put 등등)
+                        url : `/api/photo/{{ request.user.username }}/?search=${text}`,           // 요청할 서버url
+                        async : true,            // 비동기화 여부 (default : true)
+                        headers : {              // Http header
+                        "Content-Type" : "application/json",
+                        "X-HTTP-Method-Override" : "POST"
+                        },
+                        dataType : 'json',       // 데이터 타입 (html, xml, json, text 등등)
+                        success : function(result) { // 결과 성공 콜백함수
+                            var list = "";
+                            try{
+                                if(text != ""){
+                                    for(var i=0; i<result.length; i++){
+                                        list += `<li class="list-group-item" style="list-style: none">
+                                                    ${result[i].title} | ${result[i].description}
+                                                </li>`;
+                                    }   
+                                }
+                                document.querySelector(".list-group").innerHTML = list;
+                            }
+                            catch{
+                                console.log("no result");
+                            }
+                        },
+                        error : function(request, status, error) { // 결과 에러 콜백함수
+                            console.log('error');
+                        }
+                    })
+                }
+            }
+        }
         </script>
     </body>
 </html>
