@@ -11,5 +11,5 @@ class AlbumSerializer(serializers.ModelSerializer):
 class PhotoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Photo
-        fields = ['album', 'title', 'description']
-        extra_kwagrs = {'album': {'read_only': True}, 'title': {'read_only': True}, 'description': {'read_only': True}}
+        fields = ['album', 'title', 'description', 'album_title']
+        extra_kwagrs = {'album': {'read_only': True}, 'title': {'read_only': True}, 'description': {'read_only': True}, 'album_title':{'read_only':True}}

@@ -48,6 +48,9 @@ class Photo(models.Model):
     def __str__(self):
         return self.title
     
+    def album_title(self):
+        return self.album.title
+    
     class Meta:
         verbose_name = "사진"
         verbose_name_plural = "사진"

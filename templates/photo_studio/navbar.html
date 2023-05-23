@@ -2,19 +2,15 @@
     <div class="container-fluid">
         <a class="navbar-brand" href="{% url 'photo_studio:index' %}" style="font-size:1.6rem;"><b>PhotoStudio</b></a>
         <div class="collapse navbar-collapse item2" id="navbarSupportedContent" style="float:left; z-index:1;">
-            <ul class="navbar-nav mb-2 mb-lg-0" style="z-index:1;">
+            <ul class="navbar-nav mb-2 mb-lg-0">
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'photo_studio:main' %}">Main</a>
                 </li>
             </ul>
             {% if request.path != '/' %}
             <div class="search_text" style="font-size:1rem; position:relative; width:300px; margin:0 auto;">
-                {% if 'main' in request.path and 'new' not in request.path and 'edit' not in request.path %}
-                <input class="form-control me-2" type="text" id="search_main" placeholder="Search" aria-label="Search" oninput="search()">
-                {% elif 'album' in request.path and 'new' not in request.path and 'edit' not in request.path %}
-                <input class="form-control me-2" type="text" id="search_album" placeholder="Search" aria-label="Search" oninput="search()">
-                {% endif %}
-                <ul class="list-group" style="overflow-y:scroll; width:100%; position:absolute; top:50%; left:50%; transform:translate(-50%, 12%); "></ul>
+                <input class="form-control me-2" type="text" id="search_photo" placeholder="Search" aria-label="Search" oninput="search()">
+                <ul class="list-group" style="width:100%; position:absolute; overflow-y:scroll; overflow-x: hidden;"></ul>
             </div>
             {% endif %}
         </div>

@@ -18,6 +18,36 @@
             #studio:hover {
                 background: silver;
             }
+            .list-group-item:hover{
+                background: skyblue;
+            }
+            .hovertext {
+                position: relative;
+                border-bottom: 1px dotted black;
+              }
+              
+              .hovertext:before {
+                content: attr(data-hover);
+                visibility: hidden;
+                opacity: 0;
+                width: 140px;
+                background-color: white;
+                color: black;
+                text-align: center;
+                border-radius: 5px;
+                padding: 5px 0;
+                transition: opacity ease-in-out;
+                border: 0.7px solid;
+              
+                position: absolute;
+                z-index: 10;
+                left: 60%;
+              }
+              
+              .hovertext:hover:before {
+                opacity: 1;
+                visibility: visible;
+              }
         </style>
     </head>
     <body>
@@ -66,43 +96,8 @@
             }
 
         function search(){
-            if(document.querySelector("#search_main")){
-                var text = document.querySelector("#search_main").value;
-                if(text != null){
-                    $.ajax({
-                        type : 'GET',           // 타입 (get, post, put 등등)
-                        url : `/api/album/{{ request.user.username }}/?search=${text}`,           // 요청할 서버url
-                        async : true,            // 비동기화 여부 (default : true)
-                        headers : {              // Http header
-                        "Content-Type" : "application/json",
-                        "X-HTTP-Method-Override" : "POST"
-                        },
-                        dataType : 'json',       // 데이터 타입 (html, xml, json, text 등등)
-                        success : function(result) { // 결과 성공 콜백함수
-                            var list = "";
-                            try{
-                                if(text != ""){
-                                    for(var i=0; i<result.length; i++){
-                                        list += `<li class="list-group-item" style="list-style: none">
-                                                    ${result[i].title} | ${result[i].description}
-                                                </li>`;
-                                    }   
-                                }
-                                document.querySelector(".list-group").innerHTML = list;
-                            }
-                            catch{
-                                console.log("no result");
-                            }
-                        },
-                        error : function(request, status, error) { // 결과 에러 콜백함수
-                            console.log('error');
-                        }
-                    })
-                }
-            }
-
-            if(document.querySelector("#search_album")){
-                var text = document.querySelector("#search_album").value;
+            if(document.querySelector("#search_photo")){
+                var text = document.querySelector("#search_photo").value;
                 if(text != null){
                     $.ajax({
                         type : 'GET',           // 타입 (get, post, put 등등)
@@ -118,9 +113,12 @@
                             try{
                                 if(text != ""){
                                     for(var i=0; i<result.length; i++){
-                                        list += `<li class="list-group-item" style="list-style: none">
-                                                    ${result[i].title} | ${result[i].description}
-                                                </li>`;
+                                        list += `<a href="/album/${result[i].album}" style="text-decoration:none;">
+                                                <li class="list-group-item hovertext" style="list-style: none" data-hover="${result[i].description}">
+                                                <span class="badge bg-secondary">${result[i].album_title}</span>
+                                                <b>${result[i].title}</b>
+                                                </li>
+                                                </a>`;
                                     }   
                                 }
                                 document.querySelector(".list-group").innerHTML = list;
