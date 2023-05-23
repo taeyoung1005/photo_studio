@@ -57,7 +57,7 @@ def album_new(request):
         if form.is_valid():
             album = form.save(commit=False)
             album.owner = request.user
-            response = requests.get(f"http://203.252.230.243:5680/{album.title}")
+            response = requests.get(f"http://203.252.230.243:5680/{str(album.title).replace(' ', '_')}")
             with open(f"static/img/thumbnail/{album.title}.png", "wb") as f:
                 f.write(response.content)
             album.thumbnail = f"static/img/thumbnail/{album.title}.png"
