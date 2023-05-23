@@ -29,6 +29,7 @@ class Album(models.Model):
     start_date = models.DateField(verbose_name="시작일", blank=True, null=True)
     last_date = models.DateField(verbose_name="종료일", blank=True, null=True)
     description = models.CharField(max_length=100, verbose_name="설명")
+    thumbnail = models.ImageField(upload_to="static/thumbnail", verbose_name="썸네일", default="", null=False)
     
     def __str__(self):
         return self.title

@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, render, redirect
 from django.template import TemplateDoesNotExist
+import requests
 
 from photo_studio.forms import UserForm, UserFormForEdit, AlbumForm, PhotoForm
 from .models import Album, Photo, Photo_templates
@@ -56,6 +57,10 @@ def album_new(request):
         if form.is_valid():
             album = form.save(commit=False)
             album.owner = request.user
+            response = requests.get(f"http://203.252.230.243:5680/{album.title}")
+            with open(f"static/img/thumbnail/{album.title}.png", "wb") as f:
+                f.write(response.content)
+            album.thumbnail = f"static/img/thumbnail/{album.title}.png"
             album.save()
             return redirect('photo_studio:main')
     else:

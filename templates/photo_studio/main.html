@@ -17,7 +17,7 @@
                     {% for album in albums %}
                         <div class="col mb-5">
                             <div class="card text-dark bg-light mb-3">
-                                <img alt="AI 이미지 생성 예정" class="card-img-top">
+                                <img {% if album.thumbnail %} src="{{ album.thumbnail.url }}"{% endif %}alt="AI 이미지 생성 예정" class="card-img-top">
                                 <div class="card-body" id="studio" onclick="location.href='{% url "photo_studio:album" album_id=album.id %}'">
                                     <div class="text-center">
                                         <h2 class="card-title">{{ album.title }}</h2>
