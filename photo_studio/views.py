@@ -57,10 +57,13 @@ def album_new(request):
         if form.is_valid():
             album = form.save(commit=False)
             album.owner = request.user
-            response = requests.get(f"http://203.252.230.243:5680/{str(album.title).replace(' ', '_')}")
-            with open(f"static/img/thumbnail/{album.title}.png", "wb") as f:
-                f.write(response.content)
-            album.thumbnail = f"static/img/thumbnail/{album.title}.png"
+            try:
+                response = requests.get(f"http://203.252.230.243:5680/{album.title}")
+                with open(f"static/img/thumbnail/{album.title}.png", "wb") as f:
+                    f.write(response.content)
+                album.thumbnail = f"static/img/thumbnail/{album.title}.png"
+            except:
+                album.thumbnail = "static/img/thumbnail/default.png"
             album.save()
             return redirect('photo_studio:main')
     else:
@@ -71,15 +74,15 @@ def album_new(request):
 def album_edit(request, album_id):
     context = {}
     context['album_id'] = album_id
-
     if request.method == "POST":
         form = AlbumForm(request.POST)
         album = Album.objects.get(id=album_id)
         if form.is_valid():
             album.title = form.cleaned_data['title']
             album.start_date = form.cleaned_data['start_date']
-            album.last_date = form.cleaned_data['last_date']
+            album.end_date = form.cleaned_data['end_date']
             album.description = form.cleaned_data['description']
+            album.thumbnail = form.cleaned_data['thumbnail']
             album.save()
             return redirect('photo_studio:main')
     else:
@@ -90,7 +93,7 @@ def album_edit(request, album_id):
         form = AlbumForm(instance=album)
         context['form'] = form
         context['start_date'] = str(album.start_date)
-        context['last_date'] = str(album.last_date)
+        context['end_date'] = str(album.end_date)
     return render(request, 'photo_studio/album_edit.html', context=context)
 
 @login_required
@@ -239,9 +242,12 @@ def download(request, album_id):
         return response
     render(request, 'photo_studio/download.html', context=context)
 
+#에러메세지 출력하는 가능하게 하기
 def signup(request):
+    context = {}
     if request.method == "POST":
         form = UserForm(request.POST)
+        print(form)
         if form.is_valid():
             form.save()
             username = form.cleaned_data.get('username')
@@ -249,9 +255,10 @@ def signup(request):
             user = authenticate(username=username, password=raw_password)  # 사용자 인증
             login(request, user)  # 로그인
             return redirect('photo_studio:index')
-        else:
-            form = UserForm()
-    return render(request, 'photo_studio/signup.html', {'form': form})
+    else:
+        form = UserForm()
+    context['form'] = form
+    return render(request, 'photo_studio/signup.html', context)
 
 @login_required
 def account(request):

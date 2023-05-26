@@ -37,7 +37,7 @@
         <div class="mb-3">
             <label for="phone_number">전화번호</label>
             <input type="text" class="form-control" name="phone_number" id="phone_number"
-                   value="{{ form.phone_number.value|default_if_none:'' }}" placeholder="010-1234-5678" required>
+                   value="{{ form.phone_number.value|default_if_none:'' }}" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" required>
         </div>
         <button type="submit" class="btn btn-primary">생성하기</button>
     </form>

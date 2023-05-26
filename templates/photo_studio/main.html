@@ -12,13 +12,14 @@
     <!-- Section-->
     <section class="py-5">
         <div class="container px-4 px-lg-5 mt-5"> 
-            <div class="row gx-4 gx-lg-5 row-cols-1 row-cols-md-2 row-cols-lg-3 justify-content-center">
+            <div class="grid gx-4 gx-lg-5 row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 justify-content-center">
                 {% if albums %}
+                    <div class="grid-sizer grid-item mb-5"></div>
                     {% for album in albums %}
-                        <div class="col mb-5">
-                            <div class="card text-dark bg-light mb-3">
+                        <div class="grid-item mb-5"style="padding-left:10px; padding-right:10px;" onclick="location.href='{% url "photo_studio:album" album_id=album.id %}'">
+                            <div  id="studio"  class="card text-dark bg-light mb-3">
                                 <img {% if album.thumbnail %} src="{{ album.thumbnail.url }}"{% endif %}alt="AI 이미지 생성 예정" class="card-img-top">
-                                <div class="card-body" id="studio" onclick="location.href='{% url "photo_studio:album" album_id=album.id %}'">
+                                <div class="card-body">
                                     <div class="text-center">
                                         <h2 class="card-title">{{ album.title }}</h2>
                                         <p class="card-text">{{ album.description }}</p>

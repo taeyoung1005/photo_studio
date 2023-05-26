@@ -20,7 +20,7 @@
             <div class="col-12 mb-3">
                 <label for="end_date">종료날짜</label>
                 <input type="date" class="form-control" name="end_date" id="end_date"
-                    value="{{ last_date|default_if_none:'' }}" required>
+                    value="{{ end_date|default_if_none:'' }}" required>
             </div>
             <div class="col-12 mb-3">
                 <label for="description">설명</label>

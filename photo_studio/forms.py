@@ -19,7 +19,7 @@ class UserFormForEdit(UserChangeForm):
 class AlbumForm(forms.ModelForm):
     class Meta:
         model = Album
-        fields = ("title", "start_date", "last_date", "description")
+        fields = ("title", "start_date", "end_date", "description")
 
 class PhotoForm(forms.ModelForm):
     class Meta:

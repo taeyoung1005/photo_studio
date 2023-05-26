@@ -16,7 +16,8 @@
                 padding-left:8px;
             }
             #studio:hover {
-                background: silver;
+                border : 1px solid black;
+
             }
             .list-group-item:hover{
                 background: skyblue;
@@ -24,9 +25,9 @@
             .hovertext {
                 position: relative;
                 border-bottom: 1px dotted black;
-              }
+            }
               
-              .hovertext:before {
+            .hovertext:before {
                 content: attr(data-hover);
                 visibility: hidden;
                 opacity: 0;
@@ -38,26 +39,65 @@
                 padding: 5px 0;
                 transition: opacity ease-in-out;
                 border: 0.7px solid;
-              
                 position: absolute;
                 z-index: 10;
                 left: 60%;
-              }
-              
-              .hovertext:hover:before {
+            }
+            
+            .hovertext:hover:before {
                 opacity: 1;
                 visibility: visible;
-              }
+            }
+
+            li a {
+                display: block;
+            }
+
+            html, body {
+                height: 100%
+            }
+            
+            #wrap {
+                position: relative;
+                min-height: 100%;
+                padding-bottom: 114px;
+            }
+            
+            footer {
+                width: 100%;
+                position: absolute;
+                bottom: 0;
+            }
         </style>
     </head>
     <body>
+        <div id="wrap">
         {% include 'photo_studio/navbar.html' %}
         {% block content %}{% endblock content %}
         {% include 'photo_studio/footer.html' %}
-        {% comment %} <script src="{% static 'js/bootstrap.min.js' %}"></script> {% endcomment %}
+        </div>
         <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
         <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-        <script type="text/javascript">           
+        <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
+        <script>
+            $('.grid').masonry({
+                itemSelector: '.grid-item',
+                columnWidth: '.grid-sizer',
+                percentPosition: true
+              });
+            
+            $(document).ready(function(){
+                $("input[type='checkbox']").click(function(){
+                    var limit = 4;
+                    var check = $("input[type='checkbox']:checked").length;
+                    if(check > limit){
+                        alert("사진은 4장까지 선택 가능합니다.");
+                        $(this).prop("checked", false);
+                    }
+                });
+            });
+        </script>
+        <script type="text/javascript">    
             var item1 = document.querySelector(".item1");
             var item2 = document.querySelector(".item2");
             
@@ -113,12 +153,12 @@
                             try{
                                 if(text != ""){
                                     for(var i=0; i<result.length; i++){
-                                        list += `<a href="/album/${result[i].album}" style="text-decoration:none;">
-                                                <li class="list-group-item hovertext" style="list-style: none" data-hover="${result[i].description}">
+                                        list += `<li class="list-group-item hovertext" style="list-style: none" data-hover="${result[i].description}">
+                                                <a href="/album/${result[i].album}" style="text-decoration:none;">
                                                 <span class="badge bg-secondary">${result[i].album_title}</span>
                                                 <b>${result[i].title}</b>
-                                                </li>
-                                                </a>`;
+                                                </a>
+                                                </li>`;
                                     }   
                                 }
                                 document.querySelector(".list-group").innerHTML = list;

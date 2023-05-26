@@ -46,37 +46,38 @@
         </div>
         <section class="py-5">
             <div class="container px-4 px-lg-5 mt-5"> 
-                <div class="row gx-4 gx-lg-5 row-cols-1 row-cols-md-2 row-cols-lg-3 justify-content-center">
-                        {% for photo in photos %}
-                            <div class="col mb-5">
-                                <div class="card text-dark bg-light mb-3" style="max-width: 18rem; margin:0 auto;">
-                                    <img src="{{ photo.image.url }}" alt="{{ photo.title }}" class="card-img-top">
-                                    <div class="card-body" id="studio">
-                                        <div class="text-center">
-                                            <h5 class="card-title">
-                                                {{ photo.title }} 
-                                                <input id="{{ photo.property }}" 
-                                                    class="photo{{ photo.id }}" 
-                                                    type="checkbox" 
-                                                    name="photo_id" 
-                                                    value="{{ photo.id }}"
-                                                    disabled>
-                                            </h5>
-                                            <p class="card-text">{{ photo.description }}</p>
-                                            <div class="dropdown">
-                                                <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                  옵션
-                                                </button>
-                                                <ul class="dropdown-menu">
-                                                  <li><a class="dropdown-item" href="{% url 'photo_studio:photo_edit' photo_id=photo.id album_id=album_id %}">수정</a></li>
-                                                  <li><a class="dropdown-item" href="{% url 'photo_studio:photo_delete' photo_id=photo.id album_id=album_id %}">삭제</a></li>
-                                                </ul>
-                                            </div>
+                <div class="grid gx-4 gx-lg-5 row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 justify-content-center">
+                    <div class="grid-sizer grid-item mb-5"></div>
+                    {% for photo in photos %}
+                        <div class="grid-item mb-5" style="padding-left:10px; padding-right:10px;">
+                            <div id="studio" class="card text-dark bg-light mb-3" style="max-width: 18rem; margin:0 auto;">
+                                <img src="{{ photo.image.url }}" alt="{{ photo.title }}" class="card-img-top">
+                                <div class="card-body">
+                                    <div class="text-center">
+                                        <h5 class="card-title">
+                                            {{ photo.title }} 
+                                            <input id="{{ photo.property }}" 
+                                                class="photo{{ photo.id }} select_photo" 
+                                                type="checkbox" 
+                                                name="photo_id" 
+                                                value="{{ photo.id }}"
+                                                disabled>
+                                        </h5>
+                                        <p class="card-text">{{ photo.description }}</p>
+                                        <div class="dropdown">
+                                            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                옵션
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li><a class="dropdown-item" href="{% url 'photo_studio:photo_edit' photo_id=photo.id album_id=album_id %}">수정</a></li>
+                                                <li><a class="dropdown-item" href="{% url 'photo_studio:photo_delete' photo_id=photo.id album_id=album_id %}">삭제</a></li>
+                                            </ul>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        {% endfor %}
+                        </div>
+                    {% endfor %}
                 </div>
             </div>
         </section>
