@@ -16,13 +16,15 @@
                 {% if albums %}
                     <div class="grid-sizer grid-item mb-5"></div>
                     {% for album in albums %}
-                        <div class="grid-item mb-5"style="padding-left:10px; padding-right:10px;" onclick="location.href='{% url "photo_studio:album" album_id=album.id %}'">
-                            <div  id="studio"  class="card text-dark bg-light mb-3">
-                                <img {% if album.thumbnail %} src="{{ album.thumbnail.url }}"{% endif %}alt="AI 이미지 생성 예정" class="card-img-top">
-                                <div class="card-body">
-                                    <div class="text-center">
-                                        <h2 class="card-title">{{ album.title }}</h2>
-                                        <p class="card-text">{{ album.description }}</p>
+                        <div class="grid-item"style="padding-left:10px; padding-right:10px;">
+                            <div id="studio" class="card text-dark bg-light mb-3">
+                                <div onclick="location.href='{% url "photo_studio:album" album_id=album.id %}'">
+                                    <img {% if album.thumbnail %} src="{{ album.thumbnail.url }}"{% endif %}alt="AI 이미지 생성 예정" class="card-img-top">
+                                    <div class="card-body">
+                                        <div class="text-center">
+                                            <h2 class="card-title">{{ album.title }}</h2>
+                                            <p class="card-text">{{ album.description }}</p>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="card-body dropdown text-center">
@@ -37,6 +39,8 @@
                             </div>
                         </div>
                     {% endfor %}
+                {% else %}
+                <h1 style="text-align:center; padding:10px;">앨범을 추가해주세요.</h1>
                 {% endif %}
             </div>
         </div>

@@ -29,9 +29,9 @@
                        class="form-control" 
                        name="image" 
                        id="image"
-                       value="{{ form.image.value |default_if_none:'' }}" 
                        accept="image/jpeg, image/png"
                        required>
+                       <label>현재 : <a href="/{{form.image.value|default_if_none:''}}">{{form.image.value}}</a><label>
             </div>
             <div class="col-12 mb-3">
                 <input type="radio" name="property" value="가로" {% if form.property.value == "가로" %}checked{% endif %}>가로사진

@@ -24,7 +24,6 @@ def index(request):
 @login_required
 def main(request):
     context = {}
-    
     try:
         albums = Album.objects.filter(owner=request.user)
     except Album.DoesNotExist:
@@ -38,7 +37,7 @@ def album(request, album_id):
     context = {}
     
     try:
-        album_title = Album.objects.get(id=album_id).title
+        album_title = Album.objects.get(id=album_id, owner=request.user).title
         photos = Photo.objects.filter(album_id=album_id, album__owner=request.user)
         photo_templates = Photo_templates.objects.all()
     except Album.DoesNotExist:
@@ -163,9 +162,10 @@ def photo_delete(request, album_id, photo_id):
         photo = Photo.objects.get(id=photo_id)
     except Photo.DoesNotExist:
         return redirect('photo_studio:album', album_id=album_id)
-    if photo.owner != request.user:
+    if str(photo.owner) != str(request.user):
         return redirect('photo_studio:album', album_id=album_id)
-    photo.delete()
+    else:
+        photo.delete()
     return redirect('photo_studio:album', album_id=album_id)
 
 @login_required
@@ -185,8 +185,20 @@ def download(request, album_id):
             template = Image.open(template.template_url).resize((1800, 1200))
             for photo_id in photo_ids:
                 photo = Photo.objects.get(id=photo_id)
-                photo = Image.open(photo.image).resize((651, 520))
-                photo_list.append(photo)
+                photo = Image.open(photo.image)
+                for orientation in ExifTags.TAGS.keys() : 
+                    if ExifTags.TAGS[orientation]=='Orientation' : break 
+                try:
+                    exif=dict(photo._getexif().items())
+                    if exif[orientation] == 3 : 
+                        photo=photo.rotate(180, expand=True)
+                    elif exif[orientation] == 6 : 
+                        photo=photo.rotate(270, expand=True)
+                    elif exif[orientation] == 8 : 
+                        photo=photo.rotate(90, expand=True)
+                except:
+                    pass
+                photo_list.append(photo.resize((651 , 520)))
 
             # 짝수번째
             x_offset = 69
@@ -212,13 +224,16 @@ def download(request, album_id):
                 photo = Image.open(photo.image)
                 for orientation in ExifTags.TAGS.keys() : 
                     if ExifTags.TAGS[orientation]=='Orientation' : break 
-                exif=dict(photo._getexif().items())
-                if exif[orientation] == 3 : 
-                    photo=photo.rotate(180, expand=True)
-                elif exif[orientation] == 6 : 
-                    photo=photo.rotate(270, expand=True)
-                elif exif[orientation] == 8 : 
-                    photo=photo.rotate(90, expand=True)
+                try:
+                    exif=dict(photo._getexif().items())
+                    if exif[orientation] == 3 : 
+                        photo=photo.rotate(180, expand=True)
+                    elif exif[orientation] == 6 : 
+                        photo=photo.rotate(270, expand=True)
+                    elif exif[orientation] == 8 : 
+                        photo=photo.rotate(90, expand=True)
+                except:
+                    pass
                 photo_list.append(photo.resize((508 , 612)))
 
             # 짝수번째
@@ -247,7 +262,6 @@ def signup(request):
     context = {}
     if request.method == "POST":
         form = UserForm(request.POST)
-        print(form)
         if form.is_valid():
             form.save()
             username = form.cleaned_data.get('username')

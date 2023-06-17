@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-v+g^5v_znvk^j09jdh%to)f=j_amnrs=sxn$lhn1s9c7_ykc-l
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -152,3 +152,5 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
 }
+
+MESSAGE_STORAGE = "django.contrib.messages.storage.cookie.CookieStorage"

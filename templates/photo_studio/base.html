@@ -52,28 +52,14 @@
             li a {
                 display: block;
             }
-
-            html, body {
-                height: 100%
-            }
-            
-            #wrap {
-                position: relative;
-                min-height: 100%;
-                padding-bottom: 114px;
-            }
-            
-            footer {
-                width: 100%;
-                position: absolute;
-                bottom: 0;
-            }
         </style>
     </head>
-    <body>
-        <div id="wrap">
+    <body class="d-flex flex-column min-vh-100" style="height:100%;">
+        <div style="height:100%;">
         {% include 'photo_studio/navbar.html' %}
         {% block content %}{% endblock content %}
+        </div>
+        <div>
         {% include 'photo_studio/footer.html' %}
         </div>
         <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
@@ -135,45 +121,45 @@
                 }
             }
 
-        function search(){
-            if(document.querySelector("#search_photo")){
-                var text = document.querySelector("#search_photo").value;
-                if(text != null){
-                    $.ajax({
-                        type : 'GET',           // 타입 (get, post, put 등등)
-                        url : `/api/photo/{{ request.user.username }}/?search=${text}`,           // 요청할 서버url
-                        async : true,            // 비동기화 여부 (default : true)
-                        headers : {              // Http header
-                        "Content-Type" : "application/json",
-                        "X-HTTP-Method-Override" : "POST"
-                        },
-                        dataType : 'json',       // 데이터 타입 (html, xml, json, text 등등)
-                        success : function(result) { // 결과 성공 콜백함수
-                            var list = "";
-                            try{
-                                if(text != ""){
-                                    for(var i=0; i<result.length; i++){
-                                        list += `<li class="list-group-item hovertext" style="list-style: none" data-hover="${result[i].description}">
-                                                <a href="/album/${result[i].album}" style="text-decoration:none;">
-                                                <span class="badge bg-secondary">${result[i].album_title}</span>
-                                                <b>${result[i].title}</b>
-                                                </a>
-                                                </li>`;
-                                    }   
+            function search(){
+                if(document.querySelector("#search_photo")){
+                    var text = document.querySelector("#search_photo").value;
+                    if(text != null){
+                        $.ajax({
+                            type : 'GET',           // 타입 (get, post, put 등등)
+                            url : `/api/photo/{{ request.user.username }}/?search=${text}`,           // 요청할 서버url
+                            async : true,            // 비동기화 여부 (default : true)
+                            headers : {              // Http header
+                            "Content-Type" : "application/json",
+                            "X-HTTP-Method-Override" : "POST"
+                            },
+                            dataType : 'json',       // 데이터 타입 (html, xml, json, text 등등)
+                            success : function(result) { // 결과 성공 콜백함수
+                                var list = "";
+                                try{
+                                    if(text != ""){
+                                        for(var i=0; i<result.length; i++){
+                                            list += `<li class="list-group-item hovertext" style="list-style: none" data-hover="${result[i].description}">
+                                                    <a href="/album/${result[i].album}" style="text-decoration:none;">
+                                                    <span class="badge bg-secondary">${result[i].album_title}</span>
+                                                    <b>${result[i].title}</b>
+                                                    </a>
+                                                    </li>`;
+                                        }   
+                                    }
+                                    document.querySelector(".list-group").innerHTML = list;
                                 }
-                                document.querySelector(".list-group").innerHTML = list;
+                                catch{
+                                    console.log("no result");
+                                }
+                            },
+                            error : function(request, status, error) { // 결과 에러 콜백함수
+                                console.log('error');
                             }
-                            catch{
-                                console.log("no result");
-                            }
-                        },
-                        error : function(request, status, error) { // 결과 에러 콜백함수
-                            console.log('error');
-                        }
-                    })
+                        })
+                    }
                 }
             }
-        }
         </script>
     </body>
 </html>

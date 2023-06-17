@@ -27,18 +27,24 @@
             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 justify-content-center">
                 {% if photo_templates %}
                     {% for template in photo_templates %}
-                        <div class="col">
-                            <p>{{ template.property }}
-                                <input 
-                                    class="template{{ template.id }}"
-                                    type="radio"
-                                    name="template_id"
-                                    value="{{ template.id }}"
-                                    onclick="select_limit('{{ template.property }}', '{{ template.id }}')">
-                            </p>
-                            <img class="img-thumbnail flex" 
-                                src="{{ template.template_url.url }}"
-                                style="width:200px; height:200px;">
+                        <div class="col" style="padding-bottom:1rem;">
+                            <div class="card" id="studio" >
+                                <div class="card-header">
+                                    <p>{{ template.property }}
+                                        <input 
+                                            class="template{{ template.id }}"
+                                            type="radio"
+                                            name="template_id"
+                                            value="{{ template.id }}"
+                                            onclick="select_limit('{{ template.property }}', '{{ template.id }}')">
+                                    </p>
+                                </div>
+                                <div class="card-body">
+                                    <img class="img-thumbnail flex" 
+                                        src="{{ template.template_url.url }}"
+                                        style="width:200px; height:200px;">
+                                </div>
+                            </div>
                         </div>
                     {% endfor %}
                 {% endif %}
@@ -49,7 +55,7 @@
                 <div class="grid gx-4 gx-lg-5 row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 justify-content-center">
                     <div class="grid-sizer grid-item mb-5"></div>
                     {% for photo in photos %}
-                        <div class="grid-item mb-5" style="padding-left:10px; padding-right:10px;">
+                        <div class="grid-item" style="padding-left:10px; padding-right:10px;">
                             <div id="studio" class="card text-dark bg-light mb-3" style="max-width: 18rem; margin:0 auto;">
                                 <img src="{{ photo.image.url }}" alt="{{ photo.title }}" class="card-img-top">
                                 <div class="card-body">
