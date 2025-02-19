@@ -121,9 +121,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
-STATICFILES_DIRS = [
-    BASE_DIR / 'static',
-]
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+# 개발 환경에서만 STATICFILES_DIRS 유지
+if DEBUG:
+    STATICFILES_DIRS = [BASE_DIR / 'static']
 
 LOGIN_REDIRECT_URL = 'photo_studio:index'
 LOGOUT_REDIRECT_URL = 'photo_studio:index'
